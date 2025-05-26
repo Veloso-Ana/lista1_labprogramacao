@@ -1,0 +1,40 @@
+import random
+
+def similar_pair(n, k, edges):
+    from collections import defaultdict
+
+    # Construir a árvore
+    tree = defaultdict(list)
+    for parent, child in edges:
+        tree[parent].append(child)
+
+    # Encontrar a raiz (nó que não é filho de ninguém)
+    all_nodes = set(range(1, n + 1))
+    children = set(child for _, child in edges)
+    roots = list(all_nodes - children)
+    root = roots[0] if roots else 1
+
+    # DFS para contar pares similares
+    def dfs(node, ancestors):
+        count = 0
+        for ancestor in ancestors:
+            if abs(ancestor - node) <= k:
+                count += 1
+        for child in tree[node]:
+            count += dfs(child, ancestors + [node])
+        return count
+
+    return dfs(root, [])
+
+def main():
+    n, k = map(int, input("Digite n (número de nós) e k (limite de similaridade): ").split())
+    edges = []
+    print("Digite as arestas (pai filho):")
+    for _ in range(n - 1):
+        pai, filho = map(int, input().split())
+        edges.append((pai, filho))
+    resultado = similar_pair(n, k, edges)
+    print("➡ Resultado:", resultado)
+
+if __name__ == "__main__":
+    main()
