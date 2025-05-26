@@ -28,9 +28,10 @@ def gerar_dados(n, max_val=200):
     return [random.randint(0, max_val) for _ in range(n)]
 
 def main():
-    n, d = map(int, input("Digite n (número de dias) e d (dias para mediana), separados por espaço: ").split())
-    print("Digite os gastos diários separados por espaço:")
-    gastos = list(map(int, input().split()))
+    n, d = 10, 5
+    gastos = gerar_dados(n)
+    print(f"n = {n}, d = {d}")
+    print("Gastos:", gastos)
     resultado = activityNotifications(gastos, d)
     print("Notificações:", resultado)
 
