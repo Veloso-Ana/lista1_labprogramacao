@@ -1,0 +1,68 @@
+def resolver_labirinto(n, m, k, maze, tunnels):
+    mapa_tuneis = {}
+    for i1, j1, i2, j2 in tunnels:
+        mapa_tuneis[(i1, j1)] = (i2, j2)
+        mapa_tuneis[(i2, j2)] = (i1, j1)
+
+    for i in range(n):
+        for j in range(m):
+            if maze[i][j] == 'A':
+                inicio = (i, j)
+
+    direcoes = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+    def movimentos_validos(x, y):
+        vizinhos = []
+        for dx, dy in direcoes:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < n and 0 <= ny < m and maze[nx][ny] != '#':
+                vizinhos.append((nx, ny))
+        return vizinhos
+
+    def simular():
+        visitados = set()
+        stack = [(inicio, 1.0)]
+        prob_escape = 0.0
+
+        while stack:
+            (x, y), prob = stack.pop()
+            if (x, y) in visitados:
+                continue
+            visitados.add((x, y))
+
+            if maze[x][y] == '*':
+                continue
+            if maze[x][y] == '%':
+                prob_escape += prob
+                continue
+
+            if (x, y) in mapa_tuneis:
+                x, y = mapa_tuneis[(x, y)]
+
+            vizinhos = movimentos_validos(x, y)
+            if not vizinhos:
+                continue
+
+            prob_dividida = prob / len(vizinhos)
+            for nx, ny in vizinhos:
+                stack.append(((nx, ny), prob_dividida))
+
+        return prob_escape
+
+    return simular()
+
+def main():
+    print("Digite n, m e k (separados por espaço):")
+    n, m, k = map(int, input().split())
+
+    print("Digite o labirinto (uma linha por vez):")
+    maze = [input().strip() for _ in range(n)]
+
+    print("Digite os túneis (um por linha no formato i1 j1 i2 j2):")
+    tunnels = [tuple(map(int, input().split())) for _ in range(k)]
+
+    resultado = resolver_labirinto(n, m, k, maze, tunnels)
+    print("Probabilidade de fuga:", resultado)
+
+if __name__ == '__main__':
+    main()
